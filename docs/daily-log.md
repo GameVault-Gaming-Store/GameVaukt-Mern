@@ -1,8 +1,7 @@
-## Day 1 -Sakif
--Organatization created
--repostitory Created
--Member added 
-Tiem : 2h
+## Day 2-Sakif
+-Created Sakif-work branch 
+-steup project folders
+time : 1h
 
 
 Add daily log Day 1
