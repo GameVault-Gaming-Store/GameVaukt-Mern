@@ -1,0 +1,83 @@
+<!-- /frontend/auth/login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GameVault - Login</title>
+
+  <link rel="stylesheet" href="login.css" />
+  <link rel="stylesheet" href="../common/navbar.css" />
+</head>
+<body>
+  <div id="navbar"></div>
+
+  <main class="auth-wrap">
+    <section class="auth-card">
+      <div class="brand">
+        <div class="brand-badge">🎮</div>
+        <div class="brand-text">
+          <h1>GameVault</h1>
+          <p>Sign in to continue</p>
+        </div>
+      </div>
+
+      <form id="loginForm" class="form">
+        <label class="field">
+          <span>Email</span>
+          <input type="email" id="email" placeholder="you@email.com" autocomplete="email" required />
+        </label>
+
+        <label class="field">
+          <span>Password</span>
+          <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required />
+        </label>
+
+        <label class="field">
+          <span>Role</span>
+          <select id="role">
+            <option value="customer" selected>Customer</option>
+            <option value="staff">Staff</option>
+            <option value="admin">Admin</option>
+          </select>
+        </label>
+
+        <div class="row">
+          <label class="check">
+            <input type="checkbox" id="rememberMe" />
+            <span>Remember me</span>
+          </label>
+          <button type="button" class="link-btn" id="fillDemo">Use demo</button>
+        </div>
+
+        <button type="submit" class="btn primary">Login</button>
+
+        <p class="muted">
+          New user?
+          <a class="link" href="register.html">Register here</a>
+        </p>
+
+        <p id="error" class="error" aria-live="polite"></p>
+      </form>
+
+      <div class="hint">
+        <p><strong>Demo accounts:</strong></p>
+        <ul>
+          <li>Admin: admin@gamevault.com / admin123</li>
+          <li>Staff: staff@gamevault.com / staff123</li>
+          <li>Customer: demo@gamevault.com / demo123</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    fetch("../common/navbar.html")
+      .then(r => r.text())
+      .then(html => { document.getElementById("navbar").innerHTML = html; })
+      .catch(() => { /* ignore if navbar missing */ });
+  </script>
+
+  <script src="login.js"></script>
+</body>
+</html>
