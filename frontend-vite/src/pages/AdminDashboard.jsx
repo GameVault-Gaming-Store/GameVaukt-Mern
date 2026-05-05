@@ -56,11 +56,11 @@ export default function AdminDashboard() {
 
       const [overviewData, userData, gameData, ticketData, badgeData] =
         await Promise.all([
-          api("/api/admin/overview"),
-          api("/api/admin/users"),
-          api("/api/staff/games"),
-          api("/api/tickets/staff/all"),
-          api("/api/badge-requests"),
+          api("https://quivaultis-backend.onrender.com/api/admin/overview"),
+          api("https://quivaultis-backend.onrender.com/api/admin/users"),
+          api("https://quivaultis-backend.onrender.com/api/staff/games"),
+          api("https://quivaultis-backend.onrender.com/api/tickets/staff/all"),
+          api("https://quivaultis-backend.onrender.com/api/badge-requests"),
         ]);
 
       setOverview(overviewData);
@@ -93,7 +93,7 @@ export default function AdminDashboard() {
     e.preventDefault();
 
     try {
-      await api("/api/admin/profiles", {
+      await api("https://quivaultis-backend.onrender.com/api/admin/profiles", {
         method: "POST",
         body: JSON.stringify(profileForm),
       });
@@ -108,7 +108,7 @@ export default function AdminDashboard() {
 
   const deleteUser = async (id) => {
     try {
-      await api(`/api/admin/users/${id}`, {
+      await api(`https://quivaultis-backend.onrender.com/api/admin/users/${id}`, {
         method: "DELETE",
       });
 
@@ -121,7 +121,7 @@ export default function AdminDashboard() {
 
   const updateGameDiscount = async (game, discount) => {
     try {
-      await api(`/api/staff/games/${game._id}/stock`, {
+      await api(`https://quivaultis-backend.onrender.com/api/staff/games/${game._id}/stock`, {
         method: "PATCH",
         body: JSON.stringify({ discount: Number(discount) }),
       });
@@ -135,7 +135,7 @@ export default function AdminDashboard() {
 
   const deleteGame = async (id) => {
     try {
-      await api(`/api/staff/games/${id}`, {
+      await api(`https://quivaultis-backend.onrender.com/api/staff/games/${id}`, {
         method: "DELETE",
       });
 
@@ -148,7 +148,7 @@ export default function AdminDashboard() {
 
   const updateTicketStatus = async (id, status) => {
     try {
-      await api(`/api/tickets/staff/${id}/status`, {
+      await api(`https://quivaultis-backend.onrender.com/api/tickets/staff/${id}/status`, {
         method: "PATCH",
         body: JSON.stringify({ status }),
       });
@@ -162,7 +162,7 @@ export default function AdminDashboard() {
 
   const approveBadge = async (id) => {
     try {
-      await api(`/api/badge-requests/${id}/approve`, {
+      await api(`https://quivaultis-backend.onrender.com/api/badge-requests/${id}/approve`, {
         method: "PUT",
       });
 
@@ -175,7 +175,7 @@ export default function AdminDashboard() {
 
   const rejectBadge = async (id) => {
     try {
-      await api(`/api/badge-requests/${id}/reject`, {
+      await api(`https://quivaultis-backend.onrender.com/api/badge-requests/${id}/reject`, {
         method: "PUT",
       });
 

@@ -59,11 +59,11 @@ export default function Marketplace() {
   const loadAll = async () => {
     try {
       const [s, l, m, inv, tx] = await Promise.all([
-        api("/api/marketplace/summary"),
-        api("/api/marketplace/listings"),
-        api("/api/marketplace/my-listings"),
-        api("/api/marketplace/inventory"),
-        api("/api/marketplace/transactions"),
+        api("https://quivaultis-backend.onrender.com/api/marketplace/summary"),
+        api("https://quivaultis-backend.onrender.com/api/marketplace/listings"),
+        api("https://quivaultis-backend.onrender.com/api/marketplace/my-listings"),
+        api("https://quivaultis-backend.onrender.com/api/marketplace/inventory"),
+        api("https://quivaultis-backend.onrender.com/api/marketplace/transactions"),
       ]);
 
       setSummary(s);
@@ -108,7 +108,7 @@ export default function Marketplace() {
     try {
       const tags = form.tags.split(",").map((x) => x.trim()).filter(Boolean);
 
-      await api("/api/marketplace/listings", {
+      await api("https://quivaultis-backend.onrender.com/api/marketplace/listings", {
         method: "POST",
         body: JSON.stringify({ ...form, price: Number(form.price), tags }),
       });
@@ -133,7 +133,7 @@ export default function Marketplace() {
 
   const buyListing = async (id) => {
     try {
-      await api("/api/marketplace/buy", {
+      await api("https://quivaultis-backend.onrender.com/api/marketplace/buy", {
         method: "POST",
         body: JSON.stringify({ listingId: id }),
       });
@@ -147,7 +147,7 @@ export default function Marketplace() {
 
   const delistListing = async (id) => {
     try {
-      await api("/api/marketplace/delist", {
+      await api("https://quivaultis-backend.onrender.com/api/marketplace/delist", {
         method: "PATCH",
         body: JSON.stringify({ listingId: id }),
       });
@@ -166,7 +166,7 @@ export default function Marketplace() {
     if (!price || !message) return;
 
     try {
-      await api("/api/marketplace/offer", {
+      await api("https://quivaultis-backend.onrender.com/api/marketplace/offer", {
         method: "POST",
         body: JSON.stringify({ listingId: id, price: Number(price), message }),
       });

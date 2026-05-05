@@ -109,7 +109,7 @@ export default function Store() {
       setLoading(true);
       setError("");
 
-      const res = await fetch("/api/store/games");
+      const res = await fetch("https://quivaultis-backend.onrender.com/api/store/games");
       const data = await res.json();
 
       if (!res.ok) {
@@ -136,7 +136,7 @@ export default function Store() {
     try {
       if (!token) return;
 
-      const res = await fetch("/api/store/owned", {
+      const res = await fetch("https://quivaultis-backend.onrender.com/api/store/owned", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -340,7 +340,7 @@ export default function Store() {
         return;
       }
 
-      const res = await fetch("/api/store/checkout", {
+      const res = await fetch("https://quivaultis-backend.onrender.com/api/store/checkout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

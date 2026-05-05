@@ -106,7 +106,7 @@ function Profile() {
           throw new Error("No token found. Please login again.");
         }
 
-        const res = await fetch("/api/profile/me", {
+        const res = await fetch("https://quivaultis-backend.onrender.com/api/profile/me", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -168,7 +168,7 @@ function Profile() {
         throw new Error("No token found. Please login again.");
       }
 
-      const res = await fetch("/api/profile/me", {
+      const res = await fetch("https://quivaultis-backend.onrender.com/api/profile/me", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -241,7 +241,7 @@ function Profile() {
         throw new Error("No token found. Please login again.");
       }
 
-      const res = await fetch("/api/badge-requests", {
+      const res = await fetch("https://quivaultis-backend.onrender.com/api/badge-requests", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

@@ -53,7 +53,7 @@ export default function Register() {
         throw new Error("Passwords do not match!");
       }
 
-      const res = await fetch("/api/auth/register", {
+      const res = await fetch("https://quivaultis-backend.onrender.com/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

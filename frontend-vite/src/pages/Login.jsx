@@ -62,7 +62,7 @@ export default function Login() {
         throw new Error("All fields are required!");
       }
 
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch("https://quivaultis-backend.onrender.com/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -41,7 +41,7 @@ export default function OwnedGames() {
 
       const token = getToken();
 
-      const res = await fetch("/api/store/owned", {
+      const res = await fetch("https://quivaultis-backend.onrender.com/api/store/owned", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

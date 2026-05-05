@@ -183,7 +183,7 @@ export default function MoodAI() {
       const token = getToken();
       if (!token) return;
 
-      const res = await fetch("/api/mood-ai/me", {
+      const res = await fetch("https://quivaultis-backend.onrender.com/api/mood-ai/me", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -213,7 +213,7 @@ export default function MoodAI() {
       setLoading(true);
       setError("");
 
-      const res = await fetch("/api/store/games");
+      const res = await fetch("https://quivaultis-backend.onrender.com/api/store/games");
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.message || "Failed to load games");
@@ -309,7 +309,7 @@ export default function MoodAI() {
       const token = getToken();
       if (!token) return;
 
-      await fetch("/api/mood-ai/history", {
+      await fetch("https://quivaultis-backend.onrender.com/api/mood-ai/history", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -413,7 +413,7 @@ export default function MoodAI() {
         return;
       }
 
-      const res = await fetch("/api/mood-ai/rate", {
+      const res = await fetch("https://quivaultis-backend.onrender.com/api/mood-ai/rate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -547,7 +547,7 @@ export default function MoodAI() {
         return;
       }
 
-      const res = await fetch("/api/mood-ai/reset", {
+      const res = await fetch("https://quivaultis-backend.onrender.com/api/mood-ai/reset", {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

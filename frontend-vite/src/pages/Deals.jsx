@@ -73,7 +73,7 @@ export default function Deals() {
       setLoading(true);
       setError("");
 
-      const res = await fetch("/api/deals");
+      const res = await fetch("https://quivaultis-backend.onrender.com/api/deals");
       const data = await res.json();
 
       if (!res.ok) {
@@ -92,7 +92,7 @@ export default function Deals() {
     try {
       if (!token) return;
 
-      const res = await fetch("/api/deals/watched", {
+      const res = await fetch("https://quivaultis-backend.onrender.com/api/deals/watched", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -143,7 +143,7 @@ export default function Deals() {
         return;
       }
 
-      const res = await fetch("/api/deals/watch", {
+      const res = await fetch("https://quivaultis-backend.onrender.com/api/deals/watch", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -179,7 +179,7 @@ export default function Deals() {
         return;
       }
 
-      const res = await fetch("/api/deals/watched", {
+      const res = await fetch("https://quivaultis-backend.onrender.com/api/deals/watched", {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

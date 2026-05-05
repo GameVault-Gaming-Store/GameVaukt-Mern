@@ -66,9 +66,9 @@ export default function StaffDashboard() {
       setMessage("");
 
       const [gameData, ticketData, badgeData] = await Promise.all([
-        api("/api/staff/games"),
-        api("/api/tickets/staff/all"),
-        api("/api/badge-requests"),
+        api("https://quivaultis-backend.onrender.com/api/staff/games"),
+        api("https://quivaultis-backend.onrender.com/api/tickets/staff/all"),
+        api("https://quivaultis-backend.onrender.com/api/badge-requests"),
       ]);
 
       setGames(Array.isArray(gameData) ? gameData : []);
@@ -148,14 +148,14 @@ export default function StaffDashboard() {
       };
 
       if (editingGameId) {
-        await api(`/api/staff/games/${editingGameId}`, {
+        await api(`https://quivaultis-backend.onrender.com/api/staff/games/${editingGameId}`, {
           method: "PUT",
           body: JSON.stringify(payload),
         });
 
         setMessage("Game updated successfully.");
       } else {
-        await api("/api/staff/games", {
+        await api("https://quivaultis-backend.onrender.com/api/staff/games", {
           method: "POST",
           body: JSON.stringify(payload),
         });
@@ -196,7 +196,7 @@ export default function StaffDashboard() {
 
   const deleteGame = async (id) => {
     try {
-      await api(`/api/staff/games/${id}`, {
+      await api(`https://quivaultis-backend.onrender.com/api/staff/games/${id}`, {
         method: "DELETE",
       });
 
@@ -209,7 +209,7 @@ export default function StaffDashboard() {
 
   const updateGameQuick = async (game, patch) => {
     try {
-      await api(`/api/staff/games/${game._id}/stock`, {
+      await api(`https://quivaultis-backend.onrender.com/api/staff/games/${game._id}/stock`, {
         method: "PATCH",
         body: JSON.stringify(patch),
       });
@@ -222,7 +222,7 @@ export default function StaffDashboard() {
 
   const approveBadge = async (id) => {
     try {
-      await api(`/api/badge-requests/${id}/approve`, {
+      await api(`https://quivaultis-backend.onrender.com/api/badge-requests/${id}/approve`, {
         method: "PUT",
       });
 
@@ -235,7 +235,7 @@ export default function StaffDashboard() {
 
   const rejectBadge = async (id) => {
     try {
-      await api(`/api/badge-requests/${id}/reject`, {
+      await api(`https://quivaultis-backend.onrender.com/api/badge-requests/${id}/reject`, {
         method: "PUT",
       });
 
@@ -248,7 +248,7 @@ export default function StaffDashboard() {
 
   const updateTicketStatus = async (id, status) => {
     try {
-      await api(`/api/tickets/staff/${id}/status`, {
+      await api(`https://quivaultis-backend.onrender.com/api/tickets/staff/${id}/status`, {
         method: "PATCH",
         body: JSON.stringify({ status }),
       });
@@ -269,7 +269,7 @@ export default function StaffDashboard() {
         return;
       }
 
-      await api(`/api/tickets/staff/${id}/reply`, {
+      await api(`https://quivaultis-backend.onrender.com/api/tickets/staff/${id}/reply`, {
         method: "POST",
         body: JSON.stringify({ text }),
       });

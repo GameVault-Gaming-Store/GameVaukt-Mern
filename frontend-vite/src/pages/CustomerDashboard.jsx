@@ -48,16 +48,16 @@ export default function CustomerDashboard() {
 
       if (token) {
         const [profileRes, ownedRes, watchedRes, ticketRes] = await Promise.all([
-          fetch("/api/profile/me", {
+          fetch("https://quivaultis-backend.onrender.com/api/profile/me", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch("/api/store/owned", {
+          fetch("https://quivaultis-backend.onrender.com/api/store/owned", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch("/api/deals/watched", {
+          fetch("https://quivaultis-backend.onrender.com/api/deals/watched", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch("/api/tickets/stats", {
+          fetch("https://quivaultis-backend.onrender.com/api/tickets/stats", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);

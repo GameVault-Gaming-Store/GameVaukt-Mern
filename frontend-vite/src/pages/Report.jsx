@@ -99,8 +99,8 @@ export default function Report() {
       setError("");
 
       const [ticketData, statData] = await Promise.all([
-        api("/api/tickets"),
-        api("/api/tickets/stats"),
+        api("https://quivaultis-backend.onrender.com/api/tickets"),
+        api("https://quivaultis-backend.onrender.com/api/tickets/stats"),
       ]);
 
       setTickets(ticketData);
@@ -190,7 +190,7 @@ export default function Report() {
         return;
       }
 
-      const data = await api("/api/tickets", {
+      const data = await api("https://quivaultis-backend.onrender.com/api/tickets", {
         method: "POST",
         body: JSON.stringify({
           issueType: form.issueType,
@@ -231,7 +231,7 @@ export default function Report() {
 
   const deleteTicket = async (id) => {
     try {
-      await api(`/api/tickets/${id}`, {
+      await api(`https://quivaultis-backend.onrender.com/api/tickets/${id}`, {
         method: "DELETE",
       });
 
@@ -246,7 +246,7 @@ export default function Report() {
     try {
       if (!selectedTicket || !replyText.trim()) return;
 
-      const data = await api(`/api/tickets/${selectedTicket._id}/reply`, {
+      const data = await api(`https://quivaultis-backend.onrender.com/api/tickets/${selectedTicket._id}/reply`, {
         method: "POST",
         body: JSON.stringify({ text: replyText }),
       });
@@ -264,7 +264,7 @@ export default function Report() {
     try {
       if (!selectedTicket) return;
 
-      const data = await api(`/api/tickets/${selectedTicket._id}/reopen`, {
+      const data = await api(`https://quivaultis-backend.onrender.com/api/tickets/${selectedTicket._id}/reopen`, {
         method: "PATCH",
       });
 
