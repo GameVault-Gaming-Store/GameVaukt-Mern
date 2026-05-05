@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Discounts & Deals | GameStore</title>
+
+  <link rel="stylesheet" href="discounts.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <h2 class="logo">🎮 GameStore</h2>
+
+    <ul class="menu menu-top">
+      <li onclick="goToDashboard()"><i class="fa-solid fa-house"></i> Dashboard</li>
+      <li onclick="goToSection('store')"><i class="fa-solid fa-store"></i> Game Store</li>
+      <li class="active"><i class="fa-solid fa-tags"></i> Discounts</li>
+      <li onclick="goToCommunity()"><i class="fa-solid fa-comments"></i> Community</li>
+      <li onclick="goToReportIssue()"><i class="fa-solid fa-flag"></i> Report & Issue</li>
+      <li onclick="goToSection('profile')"><i class="fa-solid fa-user"></i> Profile</li>
+    </ul>
+
+    <ul class="menu menu-bottom">
+      <li class="logout" onclick="logout()">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </li>
+    </ul>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <main class="main-content">
+
+    <!-- PAGE HEADER -->
+    <header class="page-head">
+      <div>
+        <h1 class="page-title">💸 Discounts & Deals</h1>
+        <p class="page-sub">Only games with active discounts appear here. Watch deals to get notified later when price drops (backend later).</p>
+      </div>
+
+      <div class="head-actions">
+        <button class="ghost-btn" type="button" onclick="openHow()">How it works</button>
+        <button class="primary-btn" type="button" onclick="goToDashboard()">⬅ Back to Dashboard</button>
+      </div>
+    </header>
+
+    <!-- STATS -->
+    <section class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Deals Live</div>
+        <div class="stat-value" id="dealCount">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Watched</div>
+        <div class="stat-value" id="watchCount">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Alerts</div>
+        <div class="stat-value" id="alertsStat">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Threshold</div>
+        <div class="stat-value" id="thresholdStat">—</div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="card settings-card">
+      <div class="card-head">
+        <div>
+          <h2>🔔 Price Drop Alerts</h2>
+          <p class="tiny">Watch games to get notified on your dashboard when price drops (backend later).</p>
+        </div>
+
+        <label class="switch" title="Enable/Disable alerts">
+          <input id="alertsEnabled" type="checkbox" />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="settings-row">
+        <div class="field">
+          <label for="thresholdSelect">Alert when price drops by</label>
+          <select id="thresholdSelect">
+            <option value="5">5%+</option>
+            <option value="10" selected>10%+</option>
+            <option value="15">15%+</option>
+            <option value="20">20%+</option>
+            <option value="30">30%+</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>&nbsp;</label>
+          <div class="btn-row">
+            <button class="primary-btn" type="button" onclick="saveAlertSettings()">Save</button>
+            <button class="danger-btn" type="button" onclick="clearAllWatched()">Clear Watched</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="settingsMsg" class="msg"></div>
+    </section>
+
+    <!-- DEALS HEADER -->
+    <section class="card feed-head">
+      <div class="feed-left">
+        <h2>🔥 Discounted Games</h2>
+        <span class="tiny">Browse only active deals, watch items, and open details.</span>
+      </div>
+
+      <div class="controls">
+        <div class="input-wrap">
+          <span class="icon">🔎</span>
+          <input id="dealSearch" type="text" placeholder="Search discounted games..." />
+        </div>
+
+        <select id="dealSort">
+          <option value="best" selected>Best Deal</option>
+          <option value="new">Newest</option>
+          <option value="low">Lowest Price</option>
+          <option value="high">Highest Price</option>
+          <option value="rating">Top Rated</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- GRID -->
+    <section id="discountGrid" class="discount-grid"></section>
+
+  </main>
+
+  <!-- ================= RIGHT NOTIFICATIONS ================= -->
+  <aside class="notification-panel">
+    <div class="panel-header">
+      <h4>🔔 Notifications</h4>
+      <span class="panel-badge" id="notifCount">0</span>
+    </div>
+    <ul id="notifItems" class="panel-list"></ul>
+  </aside>
+
+  <!-- ================= RIGHT ASSISTANT ================= -->
+  <aside class="assistant-panel">
+    <div class="panel-header">
+      <h4>🤖 Deals Assistant</h4>
+      <button class="panel-action" onclick="clearChat()">Clear</button>
+    </div>
+
+    <div id="chatArea" class="chat-area">
+      <div class="bot">👋 Try: <b>tips</b>, <b>watched</b>, <b>best deal</b>, <b>alerts</b>.</div>
+      <div class="bot small">Example: <b>best deal</b></div>
+    </div>
+
+    <div class="chat-input-row">
+      <input type="text" id="chatInput" placeholder="Ask something..."
+             onkeydown="if(event.key==='Enter')sendMessage()"/>
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </aside>
+
+  <!-- ================= HOW IT WORKS MODAL ================= -->
+  <div id="howModal" class="modal-overlay" aria-hidden="true">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>ℹ️ How Discounts work</h3>
+        <button class="modal-close" onclick="closeHow()" aria-label="Close">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="info-grid">
+          <div class="info-card">
+            <h4>1) Deals list</h4>
+            <p>Only games where <b>discount &gt; 0</b> appear here (loaded from store.js).</p>
+          </div>
+          <div class="info-card">
+            <h4>2) Watch list</h4>
+            <p>Watching a game saves it in localStorage. Later backend can send real price-drop notifications.</p>
+          </div>
+          <div class="info-card">
+            <h4>3) Alerts settings</h4>
+            <p>Turn alerts on/off and set a threshold. This saves into localStorage for now.</p>
+          </div>
+        </div>
+
+        <div class="note">
+          ✅ This UI matches your dashboard theme. Later we can connect Node/Express for real alerts + email + staff notifications.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load store data first -->
+  <script src="../store/store.js"></script>
+  <script src="discounts.js"></script>
+</body>
+</html>
