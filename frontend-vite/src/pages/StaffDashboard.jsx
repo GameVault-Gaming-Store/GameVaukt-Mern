@@ -66,9 +66,9 @@ export default function StaffDashboard() {
       setMessage("");
 
       const [gameData, ticketData, badgeData] = await Promise.all([
-        api("https://quivaultis-backend.onrender.com/api/staff/games"),
-        api("https://quivaultis-backend.onrender.com/api/tickets/staff/all"),
-        api("https://quivaultis-backend.onrender.com/api/badge-requests"),
+        api("/api/staff/games"),
+        api("/api/tickets/staff/all"),
+        api("/api/badge-requests"),
       ]);
 
       setGames(Array.isArray(gameData) ? gameData : []);
@@ -83,18 +83,51 @@ export default function StaffDashboard() {
     loadAll();
   }, []);
 
-  const filteredGames = useMemo(() => {
-    if (!search.trim()) return games;
+  const searchQuery = search.toLowerCase().trim();
 
-    const q = search.toLowerCase();
+  const filteredGames = useMemo(() => {
+    if (!searchQuery) return games;
 
     return games.filter(
       (g) =>
-        g.title?.toLowerCase().includes(q) ||
-        g.genre?.toLowerCase().includes(q) ||
-        g.platform?.toLowerCase().includes(q)
+        g.title?.toLowerCase().includes(searchQuery) ||
+        g.studio?.toLowerCase().includes(searchQuery) ||
+        g.genre?.toLowerCase().includes(searchQuery) ||
+        g.platform?.toLowerCase().includes(searchQuery) ||
+        g.playtime?.toLowerCase().includes(searchQuery) ||
+        g.difficulty?.toLowerCase().includes(searchQuery) ||
+        g.description?.toLowerCase().includes(searchQuery)
     );
-  }, [games, search]);
+  }, [games, searchQuery]);
+
+  const filteredTickets = useMemo(() => {
+    if (!searchQuery) return tickets;
+
+    return tickets.filter(
+      (t) =>
+        t.code?.toLowerCase().includes(searchQuery) ||
+        t.productName?.toLowerCase().includes(searchQuery) ||
+        t.category?.toLowerCase().includes(searchQuery) ||
+        t.issueType?.toLowerCase().includes(searchQuery) ||
+        t.orderId?.toLowerCase().includes(searchQuery) ||
+        t.status?.toLowerCase().includes(searchQuery) ||
+        t.description?.toLowerCase().includes(searchQuery) ||
+        t.user?.username?.toLowerCase().includes(searchQuery) ||
+        t.user?.email?.toLowerCase().includes(searchQuery)
+    );
+  }, [tickets, searchQuery]);
+
+  const filteredRequests = useMemo(() => {
+    if (!searchQuery) return requests;
+
+    return requests.filter(
+      (r) =>
+        r.user?.username?.toLowerCase().includes(searchQuery) ||
+        r.user?.email?.toLowerCase().includes(searchQuery) ||
+        r.requestedBadge?.toLowerCase().includes(searchQuery) ||
+        r.status?.toLowerCase().includes(searchQuery)
+    );
+  }, [requests, searchQuery]);
 
   const stats = useMemo(() => {
     const totalStock = games.reduce((sum, g) => sum + Number(g.stock || 0), 0);
@@ -148,14 +181,14 @@ export default function StaffDashboard() {
       };
 
       if (editingGameId) {
-        await api(`https://quivaultis-backend.onrender.com/api/staff/games/${editingGameId}`, {
+        await api(`/api/staff/games/${editingGameId}`, {
           method: "PUT",
           body: JSON.stringify(payload),
         });
 
         setMessage("Game updated successfully.");
       } else {
-        await api("https://quivaultis-backend.onrender.com/api/staff/games", {
+        await api("/api/staff/games", {
           method: "POST",
           body: JSON.stringify(payload),
         });
@@ -196,7 +229,7 @@ export default function StaffDashboard() {
 
   const deleteGame = async (id) => {
     try {
-      await api(`https://quivaultis-backend.onrender.com/api/staff/games/${id}`, {
+      await api(`/api/staff/games/${id}`, {
         method: "DELETE",
       });
 
@@ -209,7 +242,7 @@ export default function StaffDashboard() {
 
   const updateGameQuick = async (game, patch) => {
     try {
-      await api(`https://quivaultis-backend.onrender.com/api/staff/games/${game._id}/stock`, {
+      await api(`/api/staff/games/${game._id}/stock`, {
         method: "PATCH",
         body: JSON.stringify(patch),
       });
@@ -222,7 +255,7 @@ export default function StaffDashboard() {
 
   const approveBadge = async (id) => {
     try {
-      await api(`https://quivaultis-backend.onrender.com/api/badge-requests/${id}/approve`, {
+      await api(`/api/badge-requests/${id}/approve`, {
         method: "PUT",
       });
 
@@ -235,7 +268,7 @@ export default function StaffDashboard() {
 
   const rejectBadge = async (id) => {
     try {
-      await api(`https://quivaultis-backend.onrender.com/api/badge-requests/${id}/reject`, {
+      await api(`/api/badge-requests/${id}/reject`, {
         method: "PUT",
       });
 
@@ -248,7 +281,7 @@ export default function StaffDashboard() {
 
   const updateTicketStatus = async (id, status) => {
     try {
-      await api(`https://quivaultis-backend.onrender.com/api/tickets/staff/${id}/status`, {
+      await api(`/api/tickets/staff/${id}/status`, {
         method: "PATCH",
         body: JSON.stringify({ status }),
       });
@@ -269,7 +302,7 @@ export default function StaffDashboard() {
         return;
       }
 
-      await api(`https://quivaultis-backend.onrender.com/api/tickets/staff/${id}/reply`, {
+      await api(`/api/tickets/staff/${id}/reply`, {
         method: "POST",
         body: JSON.stringify({ text }),
       });
@@ -343,7 +376,7 @@ export default function StaffDashboard() {
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search games..."
+              placeholder="Search games, reports, badges..."
             />
           </div>
 
@@ -410,6 +443,83 @@ export default function StaffDashboard() {
                 </div>
               </div>
             </div>
+
+            {searchQuery && (
+              <div className="card">
+                <div className="card-head">
+                  <h3>Search Results</h3>
+                  <span className="chip">"{search}"</span>
+                </div>
+
+                <div className="grid-3">
+                  <div className="item">
+                    <div className="meta">
+                      <div className="title">🎮 Games</div>
+                      <div className="time">{filteredGames.length}</div>
+                    </div>
+                    <div className="desc">
+                      {filteredGames.slice(0, 3).map((g) => (
+                        <div key={g._id}>
+                          {g.title} • {g.genre}
+                        </div>
+                      ))}
+                      {filteredGames.length === 0 && "No matching games."}
+                    </div>
+                    <button
+                      className="btn ghost"
+                      style={{ marginTop: 10 }}
+                      onClick={() => setSection("games")}
+                    >
+                      Open Games
+                    </button>
+                  </div>
+
+                  <div className="item">
+                    <div className="meta">
+                      <div className="title">🚩 Reports</div>
+                      <div className="time">{filteredTickets.length}</div>
+                    </div>
+                    <div className="desc">
+                      {filteredTickets.slice(0, 3).map((t) => (
+                        <div key={t._id}>
+                          {t.code} • {t.productName}
+                        </div>
+                      ))}
+                      {filteredTickets.length === 0 && "No matching reports."}
+                    </div>
+                    <button
+                      className="btn ghost"
+                      style={{ marginTop: 10 }}
+                      onClick={() => setSection("reports")}
+                    >
+                      Open Reports
+                    </button>
+                  </div>
+
+                  <div className="item">
+                    <div className="meta">
+                      <div className="title">🏅 Badges</div>
+                      <div className="time">{filteredRequests.length}</div>
+                    </div>
+                    <div className="desc">
+                      {filteredRequests.slice(0, 3).map((r) => (
+                        <div key={r._id}>
+                          {r.user?.username || "User"} • {r.status}
+                        </div>
+                      ))}
+                      {filteredRequests.length === 0 && "No matching badge requests."}
+                    </div>
+                    <button
+                      className="btn ghost"
+                      style={{ marginTop: 10 }}
+                      onClick={() => setSection("badges")}
+                    >
+                      Open Badges
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="card">
               <div className="card-head">
@@ -584,7 +694,11 @@ export default function StaffDashboard() {
                 <div className="grid-2">
                   <div className="field">
                     <label>Cover Image Upload</label>
-                    <input type="file" accept="image/*" onChange={(e) => handleImage(e.target.files?.[0])} />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImage(e.target.files?.[0])}
+                    />
                   </div>
 
                   <div className="field">
@@ -732,7 +846,7 @@ export default function StaffDashboard() {
             <div className="card">
               <div className="card-head">
                 <h3>Badge Requests</h3>
-                <span className="chip">{requests.length}</span>
+                <span className="chip">{filteredRequests.length}</span>
               </div>
 
               <div className="table-wrap">
@@ -749,7 +863,7 @@ export default function StaffDashboard() {
                   </thead>
 
                   <tbody>
-                    {requests.map((r) => (
+                    {filteredRequests.map((r) => (
                       <tr key={r._id}>
                         <td>{r.user?.username || "N/A"}</td>
                         <td>{r.user?.email || "N/A"}</td>
@@ -773,7 +887,7 @@ export default function StaffDashboard() {
                       </tr>
                     ))}
 
-                    {requests.length === 0 && (
+                    {filteredRequests.length === 0 && (
                       <tr>
                         <td colSpan="6">No badge requests.</td>
                       </tr>
@@ -790,11 +904,11 @@ export default function StaffDashboard() {
             <div className="card">
               <div className="card-head">
                 <h3>Reports & Issues Queue</h3>
-                <span className="chip">{tickets.length}</span>
+                <span className="chip">{filteredTickets.length}</span>
               </div>
 
               <div className="list">
-                {tickets.map((ticket) => (
+                {filteredTickets.map((ticket) => (
                   <div className="item" key={ticket._id}>
                     <div className="meta">
                       <div className="title">
@@ -852,7 +966,9 @@ export default function StaffDashboard() {
                   </div>
                 ))}
 
-                {tickets.length === 0 && <div className="item">No reports found.</div>}
+                {filteredTickets.length === 0 && (
+                  <div className="item">No reports found.</div>
+                )}
               </div>
             </div>
           </section>
