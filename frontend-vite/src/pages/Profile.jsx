@@ -2,21 +2,40 @@ import { useEffect, useMemo, useState } from "react";
 import { getToken } from "../utils/authStore";
 import "../styles/profile.css";
 
+const emptyProfile = {
+  fullName: "",
+  username: "",
+  email: "",
+  phone: "",
+  country: "",
+  city: "",
+  dob: "",
+  platform: "",
+  playtime: "",
+  genres: [],
+  tag: "",
+  bio: "",
+};
+
+const cloneProfile = (profile) => {
+  return {
+    fullName: profile?.fullName || "",
+    username: profile?.username || "",
+    email: profile?.email || "",
+    phone: profile?.phone || "",
+    country: profile?.country || "",
+    city: profile?.city || "",
+    dob: profile?.dob || "",
+    platform: profile?.platform || "",
+    playtime: profile?.playtime || "",
+    genres: Array.isArray(profile?.genres) ? [...profile.genres] : [],
+    tag: profile?.tag || "",
+    bio: profile?.bio || "",
+  };
+};
+
 function Profile() {
-  const [formData, setFormData] = useState({
-    fullName: "",
-    username: "",
-    email: "",
-    phone: "",
-    country: "",
-    city: "",
-    dob: "",
-    platform: "",
-    playtime: "",
-    genres: [],
-    tag: "",
-    bio: "",
-  });
+  const [formData, setFormData] = useState(emptyProfile);
 
   const [badgeStatus, setBadgeStatus] = useState("none");
   const [badgeName, setBadgeName] = useState("");
@@ -31,10 +50,12 @@ function Profile() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
+
     setSaveMessage("");
   };
 
@@ -47,14 +68,19 @@ function Profile() {
         ? [...prev.genres, value]
         : prev.genres.filter((genre) => genre !== value),
     }));
+
     setSaveMessage("");
   };
 
   const handleReset = () => {
     if (originalProfile) {
-      setFormData(originalProfile);
+      setFormData(cloneProfile(originalProfile));
+      setSaveMessage("Profile reset to last saved version.");
+    } else {
+      setFormData(cloneProfile(emptyProfile));
+      setSaveMessage("Profile reset.");
     }
-    setSaveMessage("");
+
     setRequestMessage("");
     setError("");
   };
@@ -92,6 +118,68 @@ function Profile() {
     return "None";
   }, [badgeStatus]);
 
+  const handleExportExcel = () => {
+    try {
+      setError("");
+      setRequestMessage("");
+      setSaveMessage("");
+
+      const rows = [
+        ["Field", "Value"],
+        ["Full Name", formData.fullName],
+        ["Username", formData.username],
+        ["Email", formData.email],
+        ["Phone", formData.phone],
+        ["Country", formData.country],
+        ["City", formData.city],
+        ["Date of Birth", formData.dob],
+        ["Platform", formData.platform],
+        ["Weekly Playtime", formData.playtime],
+        ["Favorite Genres", formData.genres.join(", ")],
+        ["Gamer Tag", formData.tag],
+        ["Bio", formData.bio],
+        ["Completion", `${completion}%`],
+        ["Current Rank", currentRank],
+        ["Badge Status", badgeStatusLabel],
+        ["Badge Name", badgeName || ""],
+        ["Last Updated", lastUpdated],
+        ["Exported At", new Date().toLocaleString()],
+      ];
+
+      const csvContent = rows
+        .map((row) =>
+          row
+            .map((cell) => `"${String(cell || "").replace(/"/g, '""')}"`)
+            .join(",")
+        )
+        .join("\n");
+
+      const blob = new Blob([csvContent], {
+        type: "text/csv;charset=utf-8;",
+      });
+
+      const url = URL.createObjectURL(blob);
+
+      const safeName =
+        formData.username.trim() ||
+        formData.fullName.trim().replace(/\s+/g, "_") ||
+        "profile";
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${safeName}_profile.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(url);
+
+      setSaveMessage("Profile Excel file exported successfully.");
+    } catch (err) {
+      setError(err.message || "Failed to export Excel file");
+    }
+  };
+
   useEffect(() => {
     const loadProfile = async () => {
       try {
@@ -106,7 +194,7 @@ function Profile() {
           throw new Error("No token found. Please login again.");
         }
 
-        const res = await fetch("https://quivaultis-backend.onrender.com/api/profile/me", {
+        const res = await fetch("/api/profile/me", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -119,23 +207,10 @@ function Profile() {
           throw new Error(data.message || "Failed to load profile");
         }
 
-        const loadedProfile = {
-          fullName: data.fullName || "",
-          username: data.username || "",
-          email: data.email || "",
-          phone: data.phone || "",
-          country: data.country || "",
-          city: data.city || "",
-          dob: data.dob || "",
-          platform: data.platform || "",
-          playtime: data.playtime || "",
-          genres: Array.isArray(data.genres) ? data.genres : [],
-          tag: data.tag || "",
-          bio: data.bio || "",
-        };
+        const loadedProfile = cloneProfile(data);
 
         setFormData(loadedProfile);
-        setOriginalProfile(loadedProfile);
+        setOriginalProfile(cloneProfile(loadedProfile));
         setBadgeStatus(data.badgeStatus || "none");
         setBadgeName(data.badgeName || "");
         setLastUpdated(
@@ -168,7 +243,7 @@ function Profile() {
         throw new Error("No token found. Please login again.");
       }
 
-      const res = await fetch("https://quivaultis-backend.onrender.com/api/profile/me", {
+      const res = await fetch("/api/profile/me", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -196,23 +271,10 @@ function Profile() {
         throw new Error(data.message || "Failed to save profile");
       }
 
-      const savedProfile = {
-        fullName: data.user.fullName || "",
-        username: data.user.username || "",
-        email: data.user.email || "",
-        phone: data.user.phone || "",
-        country: data.user.country || "",
-        city: data.user.city || "",
-        dob: data.user.dob || "",
-        platform: data.user.platform || "",
-        playtime: data.user.playtime || "",
-        genres: Array.isArray(data.user.genres) ? data.user.genres : [],
-        tag: data.user.tag || "",
-        bio: data.user.bio || "",
-      };
+      const savedProfile = cloneProfile(data.user);
 
       setFormData(savedProfile);
-      setOriginalProfile(savedProfile);
+      setOriginalProfile(cloneProfile(savedProfile));
       setBadgeStatus(data.user.badgeStatus || "none");
       setBadgeName(data.user.badgeName || "");
       setLastUpdated(
@@ -241,7 +303,7 @@ function Profile() {
         throw new Error("No token found. Please login again.");
       }
 
-      const res = await fetch("https://quivaultis-backend.onrender.com/api/badge-requests", {
+      const res = await fetch("/api/badge-requests", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -266,7 +328,9 @@ function Profile() {
   if (loadingProfile) {
     return (
       <section id="section-profile" className="app-section profile-page">
-        <div style={{ color: "white", padding: "20px" }}>Loading profile...</div>
+        <div style={{ color: "white", padding: "20px" }}>
+          Loading profile...
+        </div>
       </section>
     );
   }
@@ -283,12 +347,18 @@ function Profile() {
         </div>
 
         <div className="head-actions">
-          <button className="ghost-btn" type="button">
-            Export JSON
+          <button
+            className="ghost-btn"
+            type="button"
+            onClick={handleExportExcel}
+          >
+            Export Excel
           </button>
+
           <button className="ghost-btn" type="button" onClick={handleReset}>
             Reset
           </button>
+
           <button
             className="primary-btn"
             type="button"
@@ -624,6 +694,7 @@ function Profile() {
               <b>Selected Genres</b>
               <span>{formData.genres.length}</span>
             </div>
+
             <div className="pf-check">
               <b>Bio Length</b>
               <span>{formData.bio.length}/250</span>
@@ -632,19 +703,25 @@ function Profile() {
 
           <div className="pf-badge-card">
             <div className="pf-badge-title">🏅 Badges</div>
+
             <div className="pf-badge-row">
               <span className={`pf-badge ${completion >= 20 ? "ok" : "warn"}`}>
                 Bronze
               </span>
+
               <span className={`pf-badge ${completion >= 50 ? "ok" : "warn"}`}>
                 Silver
               </span>
+
               <span className={`pf-badge ${completion >= 80 ? "ok" : "warn"}`}>
                 Gold
               </span>
+
               <span
                 className={`pf-badge ${
-                  completion === 100 || badgeStatus === "approved" ? "ok" : "warn"
+                  completion === 100 || badgeStatus === "approved"
+                    ? "ok"
+                    : "warn"
                 }`}
               >
                 Verified Eligible
@@ -666,6 +743,7 @@ function Profile() {
 
           <div className="pf-request-card">
             <div className="pf-badge-title">📨 Badge Request</div>
+
             <div className="tiny muted">
               {badgeStatus === "approved"
                 ? `Badge approved: ${badgeName || "Verified Badge"}`
